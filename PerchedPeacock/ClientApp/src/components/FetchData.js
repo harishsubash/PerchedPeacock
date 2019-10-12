@@ -1,16 +1,17 @@
 import React, { Component } from 'react';
+import firebase from 'firebase';
 
 export class FetchData extends Component {
   static displayName = FetchData.name;
 
   constructor(props) {
     super(props);
-    this.state = { forecasts: [], loading: true };
+      this.state = { forecasts: [], loading: true };
   }
 
-  componentDidMount() {
-    this.populateWeatherData();
-  }
+    componentDidMount() {
+        this.populateWeatherData();
+    }
 
   static renderForecastsTable(forecasts) {
     return (
@@ -51,9 +52,12 @@ export class FetchData extends Component {
     );
   }
 
-  async populateWeatherData() {
-      const response = await fetch('api/SampleData/WeatherForecasts');
-    const data = await response.json();
-    this.setState({ forecasts: data, loading: false });
-  }
+    async populateWeatherData() {
+        const accessToken = localStorage.getItem('accessToken');
+        const response = await fetch('api/SampleData', { headers: { 'Authorization': `Bearer ${accessToken}` } });
+        if (response) {
+            const data = await response.json();
+            this.setState({ forecasts: data, loading: false })
+        };
+    };
 }

@@ -104,7 +104,7 @@ namespace PerchedPeacock.Helper
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Perched Peacock API V1");
                 c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
-                c.RoutePrefix = string.Empty;
+                //c.RoutePrefix = string.Empty;
                 //c.OAuthClientId(googleAuthNSection["ClientId"]);
                 //c.OAuthAppName("Swagger UI");
                 //c.OAuthRealm("/");
