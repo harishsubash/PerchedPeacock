@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.29403.142
+VisualStudioVersion = 16.0.29409.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PerchedPeacock", "PerchedPeacock\PerchedPeacock.csproj", "{C2912BB2-A20A-472D-AD75-3C65E0F5C7D0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PerchedPeacock", "PerchedPeacock\PerchedPeacock.csproj", "{6D55DA51-DF46-4B69-96AA-7BD0E67A394E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C2912BB2-A20A-472D-AD75-3C65E0F5C7D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C2912BB2-A20A-472D-AD75-3C65E0F5C7D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C2912BB2-A20A-472D-AD75-3C65E0F5C7D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C2912BB2-A20A-472D-AD75-3C65E0F5C7D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D55DA51-DF46-4B69-96AA-7BD0E67A394E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D55DA51-DF46-4B69-96AA-7BD0E67A394E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D55DA51-DF46-4B69-96AA-7BD0E67A394E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D55DA51-DF46-4B69-96AA-7BD0E67A394E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {C6D0CB35-7AF2-40C0-AF1D-D5B99AE0A04B}
+		SolutionGuid = {EE14D5DC-439B-47AB-AD68-2D037EB7CDED}
 	EndGlobalSection
 EndGlobal

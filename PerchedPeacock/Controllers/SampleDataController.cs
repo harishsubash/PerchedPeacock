@@ -1,14 +1,14 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PerchedPeacock.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
-    public class SampleDataController : ControllerBase
+    public class SampleDataController : Controller
     {
         private static string[] Summaries = new[]
         {
@@ -18,7 +18,6 @@ namespace PerchedPeacock.Controllers
         [HttpGet()]
         public IEnumerable<WeatherForecast> WeatherForecasts()
         {
-            var name = this.User.Identity.Name;
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
