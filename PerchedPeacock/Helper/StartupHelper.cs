@@ -18,7 +18,7 @@ namespace PerchedPeacock.Helper
         public static void RegisterAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddIdentity<IdentityUser, IdentityRole>();
-            services.AddAuthentication(options=>
+            services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -33,11 +33,6 @@ namespace PerchedPeacock.Helper
                     ValidAudience = "perchedpeacock",
                     ValidateLifetime = true
                 };
-            }).AddGoogle(options =>
-            {
-                IConfigurationSection googleAuthNSection = configuration.GetSection("Authentication:Google");
-                options.ClientId = googleAuthNSection["ClientId"];
-                options.ClientSecret = googleAuthNSection["ClientSecret"];
             });
         }
 
