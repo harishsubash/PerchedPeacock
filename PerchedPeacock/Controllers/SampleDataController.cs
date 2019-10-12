@@ -1,22 +1,24 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 
 namespace PerchedPeacock.Controllers
 {
     [Route("api/[controller]")]
-    public class SampleDataController : Controller
+    [Authorize]
+    public class SampleDataController : ControllerBase
     {
         private static string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-        [HttpGet("[action]")]
+        [HttpGet()]
         public IEnumerable<WeatherForecast> WeatherForecasts()
         {
+            var name = this.User.Identity.Name;
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
