@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PerchedPeacock.Domain;
-using PerchedPeacock.Infra.Persistance.EF.Map;
+using PerchedPeacock.Infra.Persistance.EF.Configuration;
 
 namespace PerchedPeacock.Infra.Persistanace.EF
 {
@@ -12,8 +12,8 @@ namespace PerchedPeacock.Infra.Persistanace.EF
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new MapParkingLot());
-            modelBuilder.ApplyConfiguration(new MapParkingSlot());
+            modelBuilder.ApplyConfiguration(new ParkingLotEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new ParkingSlotEntityTypeConfiguration());
         }
 
         public DbSet<ParkingLot> ParkingLot { get; set; }

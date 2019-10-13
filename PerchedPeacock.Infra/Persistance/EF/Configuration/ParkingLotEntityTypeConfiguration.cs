@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PerchedPeacock.Domain;
 
-namespace PerchedPeacock.Infra.Persistance.EF.Map
+namespace PerchedPeacock.Infra.Persistance.EF.Configuration
 {
-    public class MapParkingLot : IEntityTypeConfiguration<ParkingLot>
+    public class ParkingLotEntityTypeConfiguration : IEntityTypeConfiguration<ParkingLot>
     {
         public void Configure(EntityTypeBuilder<ParkingLot> builder)
         {
