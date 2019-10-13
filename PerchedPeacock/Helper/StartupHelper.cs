@@ -8,6 +8,11 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using PerchedPeacock.Api;
+using PerchedPeacock.Core;
+using PerchedPeacock.Domain.Interfaces.Repositories;
+using PerchedPeacock.Infra.Persistance.Repositories;
+using PerchedPeacock.Infra.Transaction;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Collections.Generic;
 
@@ -36,11 +41,18 @@ namespace PerchedPeacock.Helper
             });
         }
 
+        public static void RegisterInjection(this IServiceCollection services)
+        {
+            services.AddTransient<IUnitOfWork, EfCoreUnitOfWork>();
+            services.AddTransient<IParkingLotRepository, ParkingLotRepository>();
+            services.AddScoped<ParkingLotApplicationService>();
+        }
+
         public static void RegisterSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
+                options.SwaggerDoc("v1", new Info { Title = "Pearched Peacock API", Version = "v1" });
                 //options.AddSecurityDefinition("oauth2", new OAuth2Scheme
                 //{
                 //    Flow = "implicit",
@@ -53,13 +65,13 @@ namespace PerchedPeacock.Helper
                 //    //Type = "oauth2",
                 //    //Description = "Google OAuth",
                 //});
-                options.AddSecurityDefinition("Bearer", new ApiKeyScheme
-                {
-                    Name = "Authorization",
-                    In = "header",
-                    Type = "apiKey",
-                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-                });
+                //options.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                //{
+                //    Name = "Authorization",
+                //    In = "header",
+                //    Type = "apiKey",
+                //    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                //});
 
                 //options.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
                 //{
