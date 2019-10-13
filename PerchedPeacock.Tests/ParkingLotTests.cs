@@ -48,7 +48,7 @@ namespace PerchedPeacock.Tests
             _parkingLot.ReleaseSlot(parkingSlot.Id.Value);
 
             Assert.IsTrue(!parkingSlot.isOccupied);
-            Assert.AreEqual(parkingSlip.ParkingCharge, 30);
+            Assert.AreEqual(parkingSlip.ParkingCharge, 40);
         }
     }
 }

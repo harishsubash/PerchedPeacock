@@ -14,7 +14,7 @@ namespace PerchedPeacock.Domain
         public ParkingSlotType ParkingType { get; private set; }
         public DateTime StartDateTime { get; set; }
         public DateTime? EndDateTime { get; set; }
-        public double ParkingCharge { get; set; }
+        public int ParkingCharge { get; set; }
         public Vehicle Vehicle { get; set; }
 
         public ParkingSlip(Action<object> applier) : base(applier)

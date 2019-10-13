@@ -60,7 +60,7 @@ namespace PerchedPeacock.Contracts
             {
                 public DateTime StartDateTime { get; set; }
                 public DateTime? EndDateTime { get; set; }
-                public double ParkingCharge { get; set; }
+                public int ParkingCharge { get; set; }
                 public string VehicleNumber { get; set; }
             }
 
