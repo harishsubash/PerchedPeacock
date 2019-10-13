@@ -4,8 +4,11 @@ namespace PerchedPeacock.Domain
 {
     public class Vehicle: Value<Vehicle>
     {
-        public string Number { get; set; }
+        public string Number { get; private set; }
 
-        public string Model { get; set; }
+        public Vehicle(string number)
+        {
+            Number = number;
+        }
     }
 }

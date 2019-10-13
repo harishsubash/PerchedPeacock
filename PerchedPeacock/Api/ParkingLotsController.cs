@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using static PerchedPeacock.Contracts.PerchedPeacockParking;
-using System.Net;
-using static PerchedPeacock.Contracts.PerchedPeacockParking.V1;
 
 namespace PerchedPeacock.Api
 {
@@ -53,19 +51,5 @@ namespace PerchedPeacock.Api
                 return BadRequest($"{ex.Message}");
             }
         }
-
-        private async Task<IActionResult> ResponseAsync(Task result)
-        {
-            try
-            {
-                await result;
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"{ex.Message}");
-            }
-        }
     }
-
 }

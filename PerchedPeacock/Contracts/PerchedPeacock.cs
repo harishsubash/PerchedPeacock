@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PerchedPeacock.Contracts
 {
@@ -14,6 +12,7 @@ namespace PerchedPeacock.Contracts
                 public string Name { get; set; }
                 public string Address { get; set; }
                 public int DailyRate { get; set; }
+                public int HourlyRate { get; set; }
                 public int NoofSlot { get; set; }
             }
 
@@ -51,10 +50,18 @@ namespace PerchedPeacock.Contracts
                 public IEnumerable<ParkingLotInfo> ParkingLots { get; set; }
             }
 
-            public enum HttpReturnAction
+            public class BookingSlotInfo
             {
-                HttpOk,
-                HttpCreate,
+                public string VehicleNumber { get; set; }
+                public DateTime StartDateTime { get; set; }
+            }
+
+            public class ReleaseSlotInfo
+            {
+                public DateTime StartDateTime { get; set; }
+                public DateTime? EndDateTime { get; set; }
+                public double ParkingCharge { get; set; }
+                public string VehicleNumber { get; set; }
             }
 
             public class ParkingResponse

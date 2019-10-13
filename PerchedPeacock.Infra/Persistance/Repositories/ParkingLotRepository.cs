@@ -29,7 +29,7 @@ namespace PerchedPeacock.Infra.Persistance.Repositories
         => await _dbContext.ParkingLot.Include(x => x.ParkingSlots).ToListAsync();
 
         public async Task<ParkingLot> Load(Guid id)
-            => await _dbContext.ParkingLot.Include(x => x.ParkingSlots).FirstOrDefaultAsync(a=> a.ParkingLotId == id);
+            => await _dbContext.ParkingLot.Include(x => x.ParkingSlots).Include(x => x.ParkingSlips).FirstOrDefaultAsync(a=> a.ParkingLotId == id);
         public void Dispose() => _dbContext.Dispose();
     }
 }

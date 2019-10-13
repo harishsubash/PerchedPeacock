@@ -5,7 +5,6 @@ using System.Linq;
 using static PerchedPeacock.Contracts.PerchedPeacockParking.V1;
 using PerchedPeacock.Domain.Interfaces.Repositories;
 using PerchedPeacock.Domain;
-using PerchedPeacock.Contracts;
 
 namespace PerchedPeacock.Api
 {
@@ -39,7 +38,7 @@ namespace PerchedPeacock.Api
             };
         }
 
-        public async Task BookParkingSlot(UpdateSlot request)
+        public async Task<BookingSlotInfo> BookParkingSlot(UpdateSlot request)
         {
             var parkingLot = await _repository.Load(request.ParkingLotId);
 
@@ -47,11 +46,21 @@ namespace PerchedPeacock.Api
                 throw new InvalidOperationException(
                     $"Entity with id {request.ParkingLotId} cannot be found");
 
-            parkingLot.BookParkingSlot(request.ParkingSlotId);
+            parkingLot.BookSlot(request.ParkingSlotId, request.VehicleNumber);
             await _unitOfWork.Commit();
+
+            var parkingSlip = parkingLot.ParkingSlips
+                .First(x => x.ParkingLotId == request.ParkingLotId
+                && x.ParkingSlotId == request.ParkingSlotId);
+            return new BookingSlotInfo
+            {
+                VehicleNumber = parkingSlip.Vehicle.Number,
+                StartDateTime = parkingSlip.StartDateTime
+            };
+
         }
 
-        public async Task ReleaseParkingSlot(UpdateSlot request)
+        public async Task<ReleaseSlotInfo> ReleaseParkingSlot(UpdateSlot request)
         {
             var parkingLot = await _repository.Load(request.ParkingLotId);
 
@@ -59,8 +68,20 @@ namespace PerchedPeacock.Api
                 throw new InvalidOperationException(
                     $"Entity with id {request.ParkingLotId} cannot be found");
 
-            parkingLot.ReleaseParkingSlot(request.ParkingSlotId);
+            parkingLot.ReleaseSlot(request.ParkingSlotId);
             await _unitOfWork.Commit();
+
+            var parkingSlip = parkingLot.ParkingSlips
+                .First(x => x.ParkingLotId == request.ParkingLotId
+                && x.ParkingSlotId == request.ParkingSlotId);
+
+            return new ReleaseSlotInfo
+            {
+                VehicleNumber = parkingSlip.Vehicle.Number,
+                StartDateTime = parkingSlip.StartDateTime,
+                EndDateTime = parkingSlip.EndDateTime,
+                ParkingCharge = parkingSlip.ParkingCharge
+            };
         }
 
         public async Task<ParkingResponse> CreateParking(CreateParking request)
@@ -70,7 +91,8 @@ namespace PerchedPeacock.Api
                     $"Entity with name {request.Name} already exists"
                 );
 
-            var parkingLot = new ParkingLot(Guid.NewGuid(), request.Name, request.Address, request.NoofSlot);
+            var parkingLot = new ParkingLot(Guid.NewGuid(), request.Name, request.Address
+                , request.NoofSlot, request.HourlyRate, request.DailyRate);
             await _repository.Add(parkingLot);
             await _unitOfWork.Commit();
 

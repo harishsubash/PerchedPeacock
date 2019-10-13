@@ -13,24 +13,45 @@ namespace PerchedPeacock.Domain
         public string Name { get; private set; }
         public string Address { get; private set; }
         public int NumberOfSlots { get; private set; }
+        public int HourlyRate { get; private set; }
+        public int DailyRate { get; private set; }
         public List<ParkingSlot> ParkingSlots { get; set; }
         public List<ParkingSlip> ParkingSlips { get; set; }
 
-
-        public ParkingLot(Guid parkingLotId, string name, string address, int numberOfSlots)
+        public ParkingLot(Guid parkingLotId, string name, string address
+            , int numberOfSlots, int hourlyRate, int dailyRate)
         {
             ParkingSlots = new List<ParkingSlot>();
+            ParkingSlips = new List<ParkingSlip>();
             Apply(new Events.CreateParkingLot
             {
                 ParkingLotId = parkingLotId,
                 Name = name,
                 Address = address,
                 NumberOfSlots = numberOfSlots,
+                HourlyRate = hourlyRate,
+                DailyRate = dailyRate,
             });
         }
-
-        private ParkingSlot FindParkingSlot(Guid parkingSlotId)
-            => ParkingSlots.FirstOrDefault(x => x.ParkingSlotId == parkingSlotId);
+        public void BookSlot(Guid parkingSlotId, string vehicleNumber)
+        {
+            Apply(new Events.BookParkingSlot
+            {
+                ParkingLotId = ParkingLotId,
+                ParkingSlotId = parkingSlotId,
+                VehicleNumber = vehicleNumber
+            }); ;
+        }
+        public void ReleaseSlot(Guid parkingSlotId)
+        {
+            Apply(new Events.ReleaseParkingSlot
+            {
+                ParkingLotId = ParkingLotId,
+                ParkingSlotId = parkingSlotId,
+                HourlyRate = HourlyRate,
+                DailyRate = DailyRate,
+            });
+        }
 
         protected override void EnsureValidState(object @event)
         {
@@ -40,6 +61,8 @@ namespace PerchedPeacock.Domain
                     if (string.IsNullOrEmpty(Name)) throw new ArgumentOutOfRangeException("Name", "Name must be supplied");
                     if (string.IsNullOrEmpty(Address)) throw new ArgumentOutOfRangeException("Address", "Address must be supplied");
                     if (NumberOfSlots <= 0) throw new ArgumentOutOfRangeException("NumberOfSlots");
+                    if (HourlyRate <= 0 ) throw new ArgumentOutOfRangeException("HourlyRate");
+                    if (DailyRate <= 0 || HourlyRate > DailyRate) throw new ArgumentOutOfRangeException("DailyRate");
                     break;
             }
         }
@@ -54,12 +77,22 @@ namespace PerchedPeacock.Domain
                     Address = e.Address;
                     NumberOfSlots = e.NumberOfSlots;
                     Id = new ParkingLotId(e.ParkingLotId);
+                    HourlyRate = e.HourlyRate;
+                    DailyRate = e.DailyRate;
                     AddParkingSlot();
+                    break;
+                case Events.BookParkingSlot e:
+                    UpdateParkingSlot(e.ParkingSlotId, e);
+                    AddParkingSlip(e);
+                    break;
+                case Events.ReleaseParkingSlot e:
+                    UpdateParkingSlot(e.ParkingSlotId, e);
+                    UpdateParkingSlip(e);
                     break;
             }
         }
 
-        public void AddParkingSlot()
+        private void AddParkingSlot()
         {
             for (int slotNumber = 1; slotNumber <= NumberOfSlots; slotNumber++)
             {
@@ -75,22 +108,33 @@ namespace PerchedPeacock.Domain
             }
         }
 
-        public void BookParkingSlot(Guid parkingSlotId)
+        private void AddParkingSlip(Events.BookParkingSlot e)
+        {
+            var createSlip = new ParkingSlip(Apply);
+            e.ParkingSlipId = Guid.NewGuid();
+            ApplyToEntity(createSlip, e);
+            ParkingSlips.Add(createSlip);
+        }
+
+        private void UpdateParkingSlip(Events.ReleaseParkingSlot e)
+        {
+            var updateSlip = FindParkingSlip(e.ParkingLotId, e.ParkingSlotId);
+            ApplyToEntity(updateSlip, e);
+        }
+
+        private void UpdateParkingSlot(Guid parkingSlotId, object @event)
         {
             ParkingSlot parkingSlot = FindParkingSlot(parkingSlotId);
             if (parkingSlot == null)
                 throw new InvalidOperationException("Cannot find slot");
 
-            ApplyToEntity(parkingSlot, new Events.BookParkingSlot { });
+            ApplyToEntity(parkingSlot, @event);
         }
 
-        public void ReleaseParkingSlot(Guid parkingSlotId)
-        {
-            ParkingSlot parkingSlot = FindParkingSlot(parkingSlotId);
-            if (parkingSlot == null)
-                throw new InvalidOperationException("Cannot find slot");
+        private ParkingSlot FindParkingSlot(Guid parkingSlotId)
+            => ParkingSlots.FirstOrDefault(x => x.ParkingSlotId == parkingSlotId);
 
-            ApplyToEntity(parkingSlot, new Events.ReleaseParkingSlot { });
-        }
+        private ParkingSlip FindParkingSlip(Guid parkingLotId, Guid parkingSlotId)
+            => ParkingSlips.FirstOrDefault(x => x.ParkingLotId == parkingLotId && x.ParkingSlotId == parkingSlotId);
     }
 }
