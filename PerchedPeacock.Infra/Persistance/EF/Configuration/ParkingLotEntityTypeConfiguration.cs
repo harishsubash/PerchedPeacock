@@ -9,6 +9,7 @@ namespace PerchedPeacock.Infra.Persistance.EF.Configuration
         public void Configure(EntityTypeBuilder<ParkingLot> builder)
         {
             builder.HasKey(x => x.ParkingLotId);
+            builder.OwnsOne(x => x.Id);
         }
     }
 }

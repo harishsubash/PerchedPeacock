@@ -4,11 +4,11 @@ using PerchedPeacock.Domain;
 
 namespace PerchedPeacock.Infra.Persistance.EF.Configuration
 {
-    public class ParkingSlotEntityTypeConfiguration : IEntityTypeConfiguration<ParkingSlot>
+    public class ParkingSlipEntityTypeConfiguration : IEntityTypeConfiguration<ParkingSlip>
     {
-        public void Configure(EntityTypeBuilder<ParkingSlot> builder)
+        public void Configure(EntityTypeBuilder<ParkingSlip> builder)
         {
-            builder.HasKey(x => x.ParkingSlotId);
+            builder.HasKey(x => x.ParkingSlipId);
             builder.OwnsOne(x => x.Id);
         }
     }

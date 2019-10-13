@@ -6,9 +6,9 @@ namespace PerchedPeacock.Domain
     public class ParkingSlot : Entity<ParkingSlotId>
     {
         protected ParkingSlot() { }
-        public Guid ParkingSlotId { get; private set; }
+        public Guid ParkingSlotId { get; set; }
         // Entity state
-        public ParkingLotId ParentId { get; private set; }
+        public Guid ParentId { get; private set; }
         public int SlotNumber { get; private set; }
         public ParkingSlotType ParkingType { get; set; }
         public bool isOccupied { get; set; }
@@ -16,8 +16,6 @@ namespace PerchedPeacock.Domain
         public ParkingSlot(Action<object> applier) : base(applier)
         {
         }
-        //public User User { get; set; }
-        //public ParkingSlip ParkingSlip { get; set; }
 
         protected override void When(object @event)
         {
@@ -29,6 +27,12 @@ namespace PerchedPeacock.Domain
                     ParentId = e.Id;
                     SlotNumber = e.SlotNumber;
                     ParkingType = ParkingSlotType.FourWheeler;
+                    isOccupied = false;
+                    break;
+                case Events.BookParkingSlot e:
+                    isOccupied = true;
+                    break;
+                case Events.ReleaseParkingSlot e:
                     isOccupied = false;
                     break;
             }

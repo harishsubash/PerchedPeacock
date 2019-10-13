@@ -14,8 +14,18 @@ namespace PerchedPeacock.Domain
         public class CreateParkingSlot
         {
             public int SlotNumber { get; internal set; }
-            public ParkingLotId Id { get; internal set; }
+            public Guid Id { get; internal set; }
             public Guid ParkingSlotId { get; internal set; }
+        }
+
+        public class BookParkingSlot
+        {
+            public Guid Id { get; internal set; }
+        }
+
+        public class ReleaseParkingSlot
+        {
+            public Guid Id { get; internal set; }
         }
     }
 }

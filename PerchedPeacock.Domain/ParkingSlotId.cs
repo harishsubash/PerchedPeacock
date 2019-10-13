@@ -5,9 +5,9 @@ namespace PerchedPeacock.Domain
 {
     public class ParkingSlotId : Value<ParkingSlotId>
     {
-        public ParkingSlotId(Guid id) => Id = id;
+        public ParkingSlotId(Guid value) => Value = value;
 
-        public Guid Id { get; set; }
+        public Guid Value { get; set; }
 
         protected ParkingSlotId() { }
     }

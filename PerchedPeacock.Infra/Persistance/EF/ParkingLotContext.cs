@@ -14,6 +14,7 @@ namespace PerchedPeacock.Infra.Persistanace.EF
         {
             modelBuilder.ApplyConfiguration(new ParkingLotEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new ParkingSlotEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new ParkingSlipEntityTypeConfiguration());
         }
 
         public DbSet<ParkingLot> ParkingLot { get; set; }

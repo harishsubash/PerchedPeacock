@@ -19,8 +19,8 @@ namespace PerchedPeacock.Contracts
 
             public class UpdateSlot
             {
-                public long ParkingLotId { get; set; }
-                public long ParkingSlotId { get; set; }
+                public Guid ParkingLotId { get; set; }
+                public Guid ParkingSlotId { get; set; }
                 public string VehicleNumber { get; set; }
             }
 

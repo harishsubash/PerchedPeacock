@@ -1,6 +1,7 @@
 ﻿using PerchedPeacock.Core;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PerchedPeacock.Domain
 {
@@ -13,6 +14,8 @@ namespace PerchedPeacock.Domain
         public string Address { get; private set; }
         public int NumberOfSlots { get; private set; }
         public List<ParkingSlot> ParkingSlots { get; set; }
+        public List<ParkingSlip> ParkingSlips { get; set; }
+
 
         public ParkingLot(Guid parkingLotId, string name, string address, int numberOfSlots)
         {
@@ -25,6 +28,9 @@ namespace PerchedPeacock.Domain
                 NumberOfSlots = numberOfSlots,
             });
         }
+
+        private ParkingSlot FindParkingSlot(Guid parkingSlotId)
+            => ParkingSlots.FirstOrDefault(x => x.ParkingSlotId == parkingSlotId);
 
         protected override void EnsureValidState(object @event)
         {
@@ -63,10 +69,28 @@ namespace PerchedPeacock.Domain
                     {
                         ParkingSlotId = Guid.NewGuid(),
                         SlotNumber = slotNumber,
-                        Id = Id
+                        Id = ParkingLotId
                     });
                 ParkingSlots.Add(parkingslot);
             }
+        }
+
+        public void BookParkingSlot(Guid parkingSlotId)
+        {
+            ParkingSlot parkingSlot = FindParkingSlot(parkingSlotId);
+            if (parkingSlot == null)
+                throw new InvalidOperationException("Cannot find slot");
+
+            ApplyToEntity(parkingSlot, new Events.BookParkingSlot { });
+        }
+
+        public void ReleaseParkingSlot(Guid parkingSlotId)
+        {
+            ParkingSlot parkingSlot = FindParkingSlot(parkingSlotId);
+            if (parkingSlot == null)
+                throw new InvalidOperationException("Cannot find slot");
+
+            ApplyToEntity(parkingSlot, new Events.ReleaseParkingSlot { });
         }
     }
 }

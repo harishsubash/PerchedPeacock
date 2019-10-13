@@ -5,6 +5,7 @@ using System.Linq;
 using static PerchedPeacock.Contracts.PerchedPeacockParking.V1;
 using PerchedPeacock.Domain.Interfaces.Repositories;
 using PerchedPeacock.Domain;
+using PerchedPeacock.Contracts;
 
 namespace PerchedPeacock.Api
 {
@@ -38,6 +39,30 @@ namespace PerchedPeacock.Api
             };
         }
 
+        public async Task BookParkingSlot(UpdateSlot request)
+        {
+            var parkingLot = await _repository.Load(request.ParkingLotId);
+
+            if (parkingLot == null)
+                throw new InvalidOperationException(
+                    $"Entity with id {request.ParkingLotId} cannot be found");
+
+            parkingLot.BookParkingSlot(request.ParkingSlotId);
+            await _unitOfWork.Commit();
+        }
+
+        public async Task ReleaseParkingSlot(UpdateSlot request)
+        {
+            var parkingLot = await _repository.Load(request.ParkingLotId);
+
+            if (parkingLot == null)
+                throw new InvalidOperationException(
+                    $"Entity with id {request.ParkingLotId} cannot be found");
+
+            parkingLot.ReleaseParkingSlot(request.ParkingSlotId);
+            await _unitOfWork.Commit();
+        }
+
         public async Task<ParkingResponse> CreateParking(CreateParking request)
         {
             if (await _repository.Exists(request.Name))
@@ -61,7 +86,7 @@ namespace PerchedPeacock.Api
                     $"Entity with id {parkingLotId} cannot be found");
             else
             {
-                var parkingSlotsInfo = 
+                var parkingSlotsInfo =
                     parkingLot.ParkingSlots.Select(parkingSlot => new ParkingSlotInfo
                     {
                         ParkingSlotId = parkingSlot.ParkingSlotId,

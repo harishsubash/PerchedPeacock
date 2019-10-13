@@ -26,10 +26,10 @@ namespace PerchedPeacock.Infra.Persistance.Repositories
             => await _dbContext.ParkingLot.AnyAsync(a => a.Name.ToLower().Equals(name.ToLower()));
 
         public async Task<IEnumerable<ParkingLot>> Load()
-        => await _dbContext.ParkingLot.Include(a=> a.ParkingSlots).ToListAsync();
+        => await _dbContext.ParkingLot.Include(x => x.ParkingSlots).ToListAsync();
 
         public async Task<ParkingLot> Load(Guid id)
-            => await _dbContext.ParkingLot.Include(a => a.ParkingSlots).FirstOrDefaultAsync(a=> a.Id == id);
+            => await _dbContext.ParkingLot.Include(x => x.ParkingSlots).FirstOrDefaultAsync(a=> a.ParkingLotId == id);
         public void Dispose() => _dbContext.Dispose();
     }
 }

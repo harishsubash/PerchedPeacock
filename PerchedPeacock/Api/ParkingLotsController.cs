@@ -32,11 +32,34 @@ namespace PerchedPeacock.Api
         public async Task<IActionResult> Post(V1.CreateParking request)
              => await ResponseAsync(_applicationService.CreateParking(request));
 
+        [HttpPut]
+        [Route("parkingSlot/book")]
+        public async Task<IActionResult> BookSlot(V1.UpdateSlot request)
+            => await ResponseAsync(_applicationService.BookParkingSlot(request));
+
+        [HttpPut]
+        [Route("parkingSlot/release")]
+        public async Task<IActionResult> ReleaseSlot(V1.UpdateSlot request)
+            => await ResponseAsync(_applicationService.ReleaseParkingSlot(request));
+
         private async Task<IActionResult> ResponseAsync<T>(Task<T> result)
         {
             try
             {
                 return Ok(await result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"{ex.Message}");
+            }
+        }
+
+        private async Task<IActionResult> ResponseAsync(Task result)
+        {
+            try
+            {
+                await result;
+                return Ok();
             }
             catch (Exception ex)
             {
