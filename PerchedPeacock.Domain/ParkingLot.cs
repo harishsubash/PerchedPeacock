@@ -11,14 +11,14 @@ namespace PerchedPeacock.Domain
 
         public Guid ParkingLotId { get; private set; }
         public string Name { get; private set; }
-        public string Address { get; private set; }
+        public Address Address { get; private set; }
         public int NumberOfSlots { get; private set; }
         public int HourlyRate { get; private set; }
         public int DailyRate { get; private set; }
         public List<ParkingSlot> ParkingSlots { get; set; }
         public List<ParkingSlip> ParkingSlips { get; set; }
 
-        public ParkingLot(Guid parkingLotId, string name, string address
+        public ParkingLot(Guid parkingLotId, string name, Address address
             , int numberOfSlots, int hourlyRate, int dailyRate)
         {
             ParkingSlots = new List<ParkingSlot>();
@@ -42,7 +42,7 @@ namespace PerchedPeacock.Domain
                 VehicleNumber = vehicleNumber
             }); ;
         }
-        public void ReleaseSlot(Guid parkingSlotId)
+        public void ReleaseSlot(Guid parkingSlotId, string vehicleNumber)
         {
             Apply(new Events.ReleaseParkingSlot
             {
@@ -50,14 +50,22 @@ namespace PerchedPeacock.Domain
                 ParkingSlotId = parkingSlotId,
                 HourlyRate = HourlyRate,
                 DailyRate = DailyRate,
+                VehicleNumber = vehicleNumber
             });
         }
 
         public ParkingSlot FindParkingSlot(Guid parkingSlotId)
             => ParkingSlots.FirstOrDefault(x => x.ParkingSlotId == parkingSlotId);
 
+        public ParkingSlot GetNextAvailaleParkingSlot()
+            => ParkingSlots.FirstOrDefault(x => !x.isOccupied);
+
         public ParkingSlip FindParkingSlip(Guid parkingSlipId)
             => ParkingSlips.FirstOrDefault(x => x.ParkingSlipId == parkingSlipId);
+
+        public ParkingSlip FindParkingSlipbyVehicleNumber(string VehicleNumber, Guid parkingLotId)
+            => ParkingSlips.FirstOrDefault(x => x.Vehicle.Number == VehicleNumber
+            && x.ParkingLotId == parkingLotId && !x.EndDateTime.HasValue);
 
         protected override void EnsureValidState(object @event)
         {
@@ -65,7 +73,10 @@ namespace PerchedPeacock.Domain
             {
                 case Events.CreateParkingLot e:
                     if (string.IsNullOrEmpty(Name)) throw new ArgumentOutOfRangeException("Name", "Name must be supplied");
-                    if (string.IsNullOrEmpty(Address)) throw new ArgumentOutOfRangeException("Address", "Address must be supplied");
+                    if (string.IsNullOrEmpty(Address.City)) throw new ArgumentOutOfRangeException("Address", "Address must be supplied");
+                    if (string.IsNullOrEmpty(Address.Country)) throw new ArgumentOutOfRangeException("Address", "Address must be supplied");
+                    if (string.IsNullOrEmpty(Address.StreetAddress)) throw new ArgumentOutOfRangeException("Address", "Address must be supplied");
+                    if (string.IsNullOrEmpty(Address.ZipCode)) throw new ArgumentOutOfRangeException("Address", "Address must be supplied");
                     if (NumberOfSlots <= 0) throw new ArgumentOutOfRangeException("NumberOfSlots");
                     if (HourlyRate <= 0 ) throw new ArgumentOutOfRangeException("HourlyRate");
                     if (DailyRate <= 0 || HourlyRate > DailyRate) throw new ArgumentOutOfRangeException("DailyRate");
@@ -128,9 +139,12 @@ namespace PerchedPeacock.Domain
             ApplyToEntity(updateSlip, e);
         }
 
+
+
         private void UpdateParkingSlot(Guid parkingSlotId, object @event)
         {
             ParkingSlot parkingSlot = FindParkingSlot(parkingSlotId);
+
             if (parkingSlot == null)
                 throw new InvalidOperationException("Cannot find slot");
 
@@ -139,6 +153,13 @@ namespace PerchedPeacock.Domain
 
             if (!parkingSlot.isOccupied && @event is Events.ReleaseParkingSlot)
                     throw new InvalidOperationException("Parking slot is not booked");
+
+            if (@event is Events.BookParkingSlot)
+            {
+                var e = @event as Events.BookParkingSlot;
+                if (FindParkingSlipbyVehicleNumber(e.VehicleNumber, e.ParkingLotId) != null)
+                    throw new InvalidOperationException("Double booking not allowed");
+            }
 
             if (@event is Events.ReleaseParkingSlot)
                 ((Events.ReleaseParkingSlot)@event).ParkingSlipId = parkingSlot.ParkingSlipId;

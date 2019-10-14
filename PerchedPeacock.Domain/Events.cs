@@ -8,7 +8,7 @@ namespace PerchedPeacock.Domain
         {
             public Guid ParkingLotId { get; internal set; }
             public string Name { get; internal set; }
-            public string Address { get; internal set; }
+            public Address Address { get; internal set; }
             public int NumberOfSlots { get; internal set; }
             public int HourlyRate { get; internal set; }
             public int DailyRate { get; internal set; }
@@ -35,6 +35,7 @@ namespace PerchedPeacock.Domain
             public Guid ParkingLotId { get; set; }
             public int HourlyRate { get; internal set; }
             public int DailyRate { get; internal set; }
+            public string VehicleNumber { get; internal set; }
         }
     }
 }

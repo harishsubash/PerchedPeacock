@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <Folder Include="ClientApp\src\assets\" />
+    <Folder Include="ClientApp\src\components\Search\" />
   </ItemGroup>
 
   <ItemGroup>

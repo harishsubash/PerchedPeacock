@@ -22,9 +22,19 @@ namespace PerchedPeacock.Api
             => await ResponseAsync(_applicationService.GetParkingLots());
 
         [HttpGet]
+        [Route("location")]
+        public async Task<IActionResult> GetOne([FromQuery]V1.RequestParkingInfo request)
+            => Ok(await _applicationService.Load(request));
+
+        [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetOne(Guid id)
             =>  Ok(await _applicationService.Load(id));
+
+        [HttpGet]
+        [Route("bookings")]
+        public async Task<IActionResult> GetBookings()
+            => await ResponseAsync(_applicationService.GetParkingBookings());
 
         [HttpPost]
         public async Task<IActionResult> Post(V1.CreateParking request)

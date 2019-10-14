@@ -10,6 +10,7 @@ namespace PerchedPeacock.Infra.Persistance.EF.Configuration
         {
             builder.HasKey(x => x.ParkingLotId);
             builder.OwnsOne(x => x.Id);
+            builder.OwnsOne(x => x.Address);
         }
     }
 }

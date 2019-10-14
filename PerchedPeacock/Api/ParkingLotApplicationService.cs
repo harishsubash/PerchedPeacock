@@ -31,7 +31,50 @@ namespace PerchedPeacock.Api
                 {
                     ParkingLotId = parkingLot.ParkingLotId,
                     Name = parkingLot.Name,
-                    Address = parkingLot.Address,
+                    Address = parkingLot.Address.ToString(),
+                    AvailableSlots = parkingLot.ParkingSlots.Count(item => !item.isOccupied),
+                    DailyParkingRate = parkingLot.DailyRate,
+                    HourlyParkingRate = parkingLot.HourlyRate
+                })
+            };
+        }
+
+        public async Task<ParkingBookingsInfo> GetParkingBookings()
+        {
+            var parkingLots = await _repository.Load();
+
+            return new ParkingBookingsInfo
+            {
+                ParkingBookings = (from parkinglot in parkingLots
+                                   from parkingSlip in parkinglot.ParkingSlips
+                                   from parkingSlot in parkinglot.ParkingSlots.Where(x => x.ParkingSlotId == parkingSlip.ParkingSlotId)
+                                   select new ParkingBookingInfo
+                                   {
+                                       ParkingLotName = parkinglot.Name,
+                                       StartDateTime = parkingSlip.StartDateTime,
+                                       EndDateTime = parkingSlip.EndDateTime,
+                                       ParkingCharge = parkingSlip.ParkingCharge,
+                                       VehicleNumber = parkingSlip.Vehicle.Number,
+                                       isActive = !parkingSlip.EndDateTime.HasValue,
+                                       ParkingSlotNumber = parkingSlot.SlotNumber
+
+                                   }).ToList()
+            };
+        }
+
+        public async Task<ParkingLotsInfo> Load(RequestParkingInfo request)
+        {
+            var parkingLots = await _repository.Load();
+            return new ParkingLotsInfo
+            {
+                ParkingLots = parkingLots.Where(parkingaddress => 
+                    parkingaddress.Address.City.Equals(request.City)
+                    && parkingaddress.Address.Country.Equals(request.Country))
+                .Select(parkingLot => new ParkingLotInfo
+                {
+                    ParkingLotId = parkingLot.ParkingLotId,
+                    Name = parkingLot.Name,
+                    Address = parkingLot.Address.ToString(),
                     AvailableSlots = parkingLot.ParkingSlots.Count(item => !item.isOccupied),
                     DailyParkingRate = parkingLot.DailyRate,
                     HourlyParkingRate = parkingLot.HourlyRate
@@ -46,6 +89,9 @@ namespace PerchedPeacock.Api
             if (parkingLot == null)
                 throw new InvalidOperationException(
                     $"Entity with id {request.ParkingLotId} cannot be found");
+
+            if (request.ParkingSlotId == Guid.Empty)
+                request.ParkingSlotId = parkingLot.GetNextAvailaleParkingSlot()?.ParkingSlotId ?? new Guid();
 
             parkingLot.BookSlot(request.ParkingSlotId, request.VehicleNumber);
             await _unitOfWork.Commit();
@@ -70,8 +116,12 @@ namespace PerchedPeacock.Api
                 throw new InvalidOperationException(
                     $"Entity with id {request.ParkingLotId} cannot be found");
 
+            if (request.ParkingSlotId == Guid.Empty)
+                request.ParkingSlotId = parkingLot.FindParkingSlipbyVehicleNumber
+                    (request.VehicleNumber, request.ParkingLotId)?.ParkingSlotId ?? new Guid();
+
             var parkingSlipId = parkingLot.FindParkingSlot(request.ParkingSlotId).ParkingSlipId;
-            parkingLot.ReleaseSlot(request.ParkingSlotId);
+            parkingLot.ReleaseSlot(request.ParkingSlotId, request.VehicleNumber);
             await _unitOfWork.Commit();
 
             var parkingSlip = parkingLot.FindParkingSlip(parkingSlipId);
@@ -91,8 +141,9 @@ namespace PerchedPeacock.Api
                 throw new InvalidOperationException(
                     $"Entity with name {request.Name} already exists"
                 );
-
-            var parkingLot = new ParkingLot(Guid.NewGuid(), request.Name, request.Address
+            
+            var parkingLot = new ParkingLot(Guid.NewGuid(), request.Name
+                , new Address(request.Address, request.City, request.Country, request.ZipCode)
                 , request.NoofSlot, request.HourlyRate, request.DailyRate);
             await _repository.Add(parkingLot);
             await _unitOfWork.Commit();
@@ -123,7 +174,7 @@ namespace PerchedPeacock.Api
                 {
                     ParkingLotId = parkingLot.ParkingLotId,
                     Name = parkingLot.Name,
-                    Address = parkingLot.Address,
+                    Address = parkingLot.Address.ToString(),
                     AvailableSlots = parkingLot.ParkingSlots.Count(item => !item.isOccupied),
                     ParkingSlotsInfo = parkingSlotsInfo,
                     DailyParkingRate = parkingLot.DailyRate,
