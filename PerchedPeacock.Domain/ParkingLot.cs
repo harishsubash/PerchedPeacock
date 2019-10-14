@@ -53,6 +53,12 @@ namespace PerchedPeacock.Domain
             });
         }
 
+        public ParkingSlot FindParkingSlot(Guid parkingSlotId)
+            => ParkingSlots.FirstOrDefault(x => x.ParkingSlotId == parkingSlotId);
+
+        public ParkingSlip FindParkingSlip(Guid parkingSlipId)
+            => ParkingSlips.FirstOrDefault(x => x.ParkingSlipId == parkingSlipId);
+
         protected override void EnsureValidState(object @event)
         {
             switch (@event)
@@ -82,6 +88,7 @@ namespace PerchedPeacock.Domain
                     AddParkingSlot();
                     break;
                 case Events.BookParkingSlot e:
+                    e.ParkingSlipId = Guid.NewGuid();
                     UpdateParkingSlot(e.ParkingSlotId, e);
                     AddParkingSlip(e);
                     break;
@@ -111,14 +118,13 @@ namespace PerchedPeacock.Domain
         private void AddParkingSlip(Events.BookParkingSlot e)
         {
             var createSlip = new ParkingSlip(Apply);
-            e.ParkingSlipId = Guid.NewGuid();
             ApplyToEntity(createSlip, e);
             ParkingSlips.Add(createSlip);
         }
 
         private void UpdateParkingSlip(Events.ReleaseParkingSlot e)
         {
-            var updateSlip = FindParkingSlip(e.ParkingLotId, e.ParkingSlotId);
+            var updateSlip = FindParkingSlip(e.ParkingSlipId);
             ApplyToEntity(updateSlip, e);
         }
 
@@ -128,13 +134,18 @@ namespace PerchedPeacock.Domain
             if (parkingSlot == null)
                 throw new InvalidOperationException("Cannot find slot");
 
+            if(parkingSlot.isOccupied && @event is Events.BookParkingSlot)
+                throw new InvalidOperationException("Parking slot is not available for booking");
+
+            if (!parkingSlot.isOccupied && @event is Events.ReleaseParkingSlot)
+                    throw new InvalidOperationException("Parking slot is not booked");
+
+            if (@event is Events.ReleaseParkingSlot)
+                ((Events.ReleaseParkingSlot)@event).ParkingSlipId = parkingSlot.ParkingSlipId;
+
             ApplyToEntity(parkingSlot, @event);
         }
 
-        private ParkingSlot FindParkingSlot(Guid parkingSlotId)
-            => ParkingSlots.FirstOrDefault(x => x.ParkingSlotId == parkingSlotId);
 
-        private ParkingSlip FindParkingSlip(Guid parkingLotId, Guid parkingSlotId)
-            => ParkingSlips.FirstOrDefault(x => x.ParkingLotId == parkingLotId && x.ParkingSlotId == parkingSlotId);
     }
 }

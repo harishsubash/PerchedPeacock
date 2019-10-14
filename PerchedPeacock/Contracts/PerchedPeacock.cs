@@ -33,7 +33,8 @@ namespace PerchedPeacock.Contracts
                 public Guid ParkingLotId { get; set; }
                 public string Name { get; set; }
                 public string Address { get; set; }
-                public string DailyParkingRate { get; set; }
+                public int DailyParkingRate { get; set; }
+                public int HourlyParkingRate { get; set; }
                 public int AvailableSlots { get; set; }
                 public List<ParkingSlotInfo> ParkingSlotsInfo { get; set; }
             }
@@ -43,8 +44,10 @@ namespace PerchedPeacock.Contracts
                 public Guid ParkingSlotId { get; set; }
                 public int SlotNumber { get; set; }
                 public bool isOccupied { get; set; }
+                public string VehicleNumber { get; set; }
+
             }
-            
+
             public class ParkingLotsInfo
             {
                 public IEnumerable<ParkingLotInfo> ParkingLots { get; set; }
@@ -54,6 +57,7 @@ namespace PerchedPeacock.Contracts
             {
                 public string VehicleNumber { get; set; }
                 public DateTime StartDateTime { get; set; }
+                public int SlotNumber { get; set; }
             }
 
             public class ReleaseSlotInfo

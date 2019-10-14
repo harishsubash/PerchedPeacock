@@ -27,20 +27,21 @@ namespace PerchedPeacock.Api
             var parkingLots = await _repository.Load();
             return new ParkingLotsInfo
             {
-                ParkingLots = parkingLots.Select(result => new ParkingLotInfo
+                ParkingLots = parkingLots.Select(parkingLot => new ParkingLotInfo
                 {
-                    ParkingLotId = result.ParkingLotId,
-                    Name = result.Name,
-                    Address = result.Address,
-                    AvailableSlots = result.ParkingSlots.Count(item => !item.isOccupied),
-                    DailyParkingRate = "60",
+                    ParkingLotId = parkingLot.ParkingLotId,
+                    Name = parkingLot.Name,
+                    Address = parkingLot.Address,
+                    AvailableSlots = parkingLot.ParkingSlots.Count(item => !item.isOccupied),
+                    DailyParkingRate = parkingLot.DailyRate,
+                    HourlyParkingRate = parkingLot.HourlyRate
                 })
             };
         }
 
         public async Task<BookingSlotInfo> BookParkingSlot(UpdateSlot request)
         {
-            var parkingLot = await _repository.Load(request.ParkingLotId);
+            ParkingLot parkingLot = await _repository.Load(request.ParkingLotId);
 
             if (parkingLot == null)
                 throw new InvalidOperationException(
@@ -49,13 +50,14 @@ namespace PerchedPeacock.Api
             parkingLot.BookSlot(request.ParkingSlotId, request.VehicleNumber);
             await _unitOfWork.Commit();
 
-            var parkingSlip = parkingLot.ParkingSlips
-                .First(x => x.ParkingLotId == request.ParkingLotId
-                && x.ParkingSlotId == request.ParkingSlotId);
+            var parkingSlot = parkingLot.FindParkingSlot(request.ParkingSlotId);
+            var parkingSlip = parkingLot.FindParkingSlip(parkingSlot.ParkingSlipId);
+
             return new BookingSlotInfo
             {
                 VehicleNumber = parkingSlip.Vehicle.Number,
-                StartDateTime = parkingSlip.StartDateTime
+                StartDateTime = parkingSlip.StartDateTime,
+                SlotNumber = parkingSlot.SlotNumber
             };
 
         }
@@ -68,12 +70,11 @@ namespace PerchedPeacock.Api
                 throw new InvalidOperationException(
                     $"Entity with id {request.ParkingLotId} cannot be found");
 
+            var parkingSlipId = parkingLot.FindParkingSlot(request.ParkingSlotId).ParkingSlipId;
             parkingLot.ReleaseSlot(request.ParkingSlotId);
             await _unitOfWork.Commit();
 
-            var parkingSlip = parkingLot.ParkingSlips
-                .First(x => x.ParkingLotId == request.ParkingLotId
-                && x.ParkingSlotId == request.ParkingSlotId);
+            var parkingSlip = parkingLot.FindParkingSlip(parkingSlipId);
 
             return new ReleaseSlotInfo
             {
@@ -109,12 +110,14 @@ namespace PerchedPeacock.Api
             else
             {
                 var parkingSlotsInfo =
-                    parkingLot.ParkingSlots.Select(parkingSlot => new ParkingSlotInfo
+                    parkingLot.ParkingSlots.Select(parkingSlot =>new ParkingSlotInfo
                     {
                         ParkingSlotId = parkingSlot.ParkingSlotId,
                         isOccupied = parkingSlot.isOccupied,
-                        SlotNumber = parkingSlot.SlotNumber
+                        SlotNumber = parkingSlot.SlotNumber,
+                        VehicleNumber = parkingLot.FindParkingSlip(parkingSlot.ParkingSlipId)?.Vehicle?.Number
                     }).ToList();
+
 
                 return new ParkingLotInfo
                 {
@@ -123,7 +126,8 @@ namespace PerchedPeacock.Api
                     Address = parkingLot.Address,
                     AvailableSlots = parkingLot.ParkingSlots.Count(item => !item.isOccupied),
                     ParkingSlotsInfo = parkingSlotsInfo,
-                    DailyParkingRate = "60",
+                    DailyParkingRate = parkingLot.DailyRate,
+                    HourlyParkingRate = parkingLot.HourlyRate
                 };
             }
         }

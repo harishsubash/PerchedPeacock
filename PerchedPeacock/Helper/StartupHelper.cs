@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -14,7 +13,6 @@ using PerchedPeacock.Domain.Interfaces.Repositories;
 using PerchedPeacock.Infra.Persistance.Repositories;
 using PerchedPeacock.Infra.Transaction;
 using Swashbuckle.AspNetCore.Swagger;
-using System.Collections.Generic;
 
 namespace PerchedPeacock.Helper
 {
@@ -52,7 +50,7 @@ namespace PerchedPeacock.Helper
         {
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("v1", new Info { Title = "Pearched Peacock API", Version = "v1" });
+                options.SwaggerDoc("v1", new Info { Title = "Perched Peacock API", Version = "v1" });
                 //options.AddSecurityDefinition("oauth2", new OAuth2Scheme
                 //{
                 //    Flow = "implicit",

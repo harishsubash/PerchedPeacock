@@ -12,6 +12,8 @@ namespace PerchedPeacock.Domain
         public int SlotNumber { get; private set; }
         public ParkingSlotType ParkingType { get; set; }
         public bool isOccupied { get; set; }
+        public Guid ParkingSlipId { get; private set; }
+
 
         public ParkingSlot(Action<object> applier) : base(applier)
         {
@@ -31,9 +33,11 @@ namespace PerchedPeacock.Domain
                     break;
                 case Events.BookParkingSlot e:
                     isOccupied = true;
+                    ParkingSlipId = e.ParkingSlipId;
                     break;
                 case Events.ReleaseParkingSlot e:
                     isOccupied = false;
+                    ParkingSlipId = new Guid();
                     break;
             }
         }
