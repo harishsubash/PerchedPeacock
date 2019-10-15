@@ -12,7 +12,7 @@ import AdminPage from '../Admin';
 
 import * as ROUTES from '../../constants/routes';
 import { withAuthentication } from '../Session';
-import AllBooking from '../Booking';
+import BookingPage from '../Booking';
 
 const App = () => (
   <Router>
@@ -28,7 +28,7 @@ const App = () => (
         component={PasswordForgetPage}
       />
       <Route exact path={ROUTES.HOME} component={HomePage} />
-      <Route exact path={ROUTES.ALLBOOKING} component={AllBooking} />
+      <Route exact path={ROUTES.BOOKING} component={BookingPage} />
       <Route exact path={ROUTES.ACCOUNT} component={AccountPage} />
       <Route exact path={ROUTES.ADMIN} component={AdminPage} />
     </div>

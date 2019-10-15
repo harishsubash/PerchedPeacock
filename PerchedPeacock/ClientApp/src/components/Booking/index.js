@@ -1,9 +1,17 @@
 import React from 'react';
+import { AuthUserContext } from '../Session';
+import { withAuthorization } from '../Session';
 
-const AllBooking = () => (
-  <div>
-    <h1>View All booking</h1>
-  </div>
+const BookingPage = () => (
+  <AuthUserContext.Consumer>
+    {authUser => (
+      <div className ="py-5">
+        Book Parking
+      </div>
+    )}
+  </AuthUserContext.Consumer>
 );
 
-export default AllBooking;
+const authCondition = authUser => !!authUser;
+
+export default withAuthorization(authCondition)(BookingPage);

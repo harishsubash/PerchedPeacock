@@ -36,7 +36,6 @@ class Navigation extends Component {
         <NavbarToggler onClick={this.toggleNavbar} className="mr-2"></NavbarToggler>
         <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!collapsed} navbar>
           <ul className="navbar-nav flex-grow">
-            <NavItem><NavLink tag={Link} className="text-dark font-weight-bolder" to={ROUTES.ALLBOOKING}>View Bookings</NavLink></NavItem>
             <NavItem><NavLink tag={Link} className="text-dark font-weight-bolder" to={ROUTES.ACCOUNT}>Account</NavLink></NavItem>
             <SignOutButton/>
           </ul>
