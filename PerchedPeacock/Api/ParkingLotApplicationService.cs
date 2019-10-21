@@ -5,6 +5,7 @@ using System.Linq;
 using static PerchedPeacock.Contracts.PerchedPeacockParking.V1;
 using PerchedPeacock.Domain.Interfaces.Repositories;
 using PerchedPeacock.Domain;
+using PerchedPeacock.Contracts;
 
 namespace PerchedPeacock.Api
 {
@@ -60,6 +61,13 @@ namespace PerchedPeacock.Api
 
                                    }).ToList()
             };
+        }
+
+        public async Task<int> CalculateParkingRate(CalculateParkingRate request)
+        {
+            var parkingLot = await _repository.Load(request.ParkingLotId);
+            ParkingCharge rate = new ParkingCharge(parkingLot.DailyRate, parkingLot.HourlyRate);
+            return rate.CalculateCharge(request.StartDateTime, request.EndDateTime);
         }
 
         public async Task<ParkingLotsInfo> Load(RequestParkingInfo request)

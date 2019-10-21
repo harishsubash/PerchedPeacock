@@ -27,6 +27,18 @@ namespace PerchedPeacock.Contracts
                 public string VehicleNumber { get; set; }
             }
 
+            public class CalculateParkingRate
+            {
+                public Guid ParkingLotId { get; set; }
+                public DateTime StartDateTime { get; set; }
+                public DateTime EndDateTime { get; set; }
+            }
+
+            public class ParkingRateResult
+            {
+                public int Charges { get; set; }
+            }
+
             public class RequestInfo
             {
                 public Guid Id { get; set; }

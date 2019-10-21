@@ -64,7 +64,7 @@ namespace PerchedPeacock.Domain
             => ParkingSlips.FirstOrDefault(x => x.ParkingSlipId == parkingSlipId);
 
         public ParkingSlip FindParkingSlipbyVehicleNumber(string VehicleNumber, Guid parkingLotId)
-            => ParkingSlips.FirstOrDefault(x => x.Vehicle.Number == VehicleNumber
+            => ParkingSlips.FirstOrDefault(x => x.Vehicle.Number.Equals(VehicleNumber)
             && x.ParkingLotId == parkingLotId && !x.EndDateTime.HasValue);
 
         protected override void EnsureValidState(object @event)

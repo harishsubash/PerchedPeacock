@@ -36,6 +36,11 @@ namespace PerchedPeacock.Api
         public async Task<IActionResult> GetBookings()
             => await ResponseAsync(_applicationService.GetParkingBookings());
 
+        [HttpGet]
+        [Route("parkingRate")]
+        public async Task<IActionResult> CalculateParkingRate([FromQuery]V1.CalculateParkingRate request)
+            => await ResponseAsync(_applicationService.CalculateParkingRate(request));
+
         [HttpPost]
         public async Task<IActionResult> Post(V1.CreateParking request)
              => await ResponseAsync(_applicationService.CreateParking(request));
