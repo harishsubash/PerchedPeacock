@@ -10,6 +10,7 @@ import HomePage from "../Home";
 import AccountPage from "../Account";
 import AdminPage from "../Admin";
 import ConfirmationPage from "../Confirmation";
+import ViewBookingPage from "../ViewBooking";
 
 import * as ROUTES from "../../constants/routes";
 import { withAuthentication } from "../Session";
@@ -27,7 +28,9 @@ const App = () => (
           exact
           path={ROUTES.PASSWORD_FORGET}
           component={PasswordForgetPage}
-        />
+                />
+
+                <Route exact path={ROUTES.VIEWBOOKING} component={ViewBookingPage} />
         <Route exact path={ROUTES.CONFIRMATION} component={ConfirmationPage} />
         <Route exact path={ROUTES.HOME} component={HomePage} />
         <Route exact path={ROUTES.BOOKING} component={BookingPage} />

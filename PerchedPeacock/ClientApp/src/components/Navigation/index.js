@@ -75,7 +75,16 @@ const NavigationAuth = () => {
           </NavbarBrand>
           <NavbarToggler onClick={toggle} />
           <Collapse isOpen={isOpen} navbar>
-            <Nav className="ml-auto" navbar>
+                      <Nav className="ml-auto" navbar>
+                          <NavItem>
+                              <NavLink
+                                  tag={Link}
+                                  className="text-dark font-weight-bolder"
+                                  to={ROUTES.VIEWBOOKING}
+                              >
+                                  View Bookings
+                </NavLink>
+                          </NavItem>
               <NavItem>
                 <NavLink
                   tag={Link}
